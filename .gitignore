@@ -8,7 +8,7 @@
 *.ip_user_files/
 *.runs/
 *.sim/
-
+*.v
 *~
 *.swp
 .DS_Store
