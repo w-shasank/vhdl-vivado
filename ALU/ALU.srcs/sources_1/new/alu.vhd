@@ -61,7 +61,7 @@ begin
                  when "111" =>
                         out_alu <= a xor b;
                   when others =>
-                            NULL;
+                            out_alu<= (others => '0');
               end case ;
      end process main;
                                               
