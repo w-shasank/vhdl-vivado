@@ -1,0 +1,81 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 02/05/2026 07:13:28 PM
+-- Design Name: 
+-- Module Name: fsm2 - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity fsm2 is
+    Port (
+        tog_en : in  std_logic;
+        clk    : in  std_logic;
+        clr    : in  std_logic;
+        y      : out std_logic;
+        output : out std_logic
+    );
+end fsm2;
+
+architecture Behavioral of fsm2 is
+
+    type state_type is (st0, st1);
+    signal ps, ns : state_type;
+
+begin
+    -- State register (synchronous with async clear)
+    sync_process : process(clk, clr)
+    begin
+        if clr = '1' then
+            ps <= st0;
+        elsif rising_edge(clk) then
+            ps <= ns;
+        end if;
+    end process;
+
+    -- Next-state logic (combinational)
+    comb_process : process(ps, tog_en)
+    begin
+        case ps is
+            when st0 =>
+                if tog_en = '1' then
+                    ns <= st1;
+                else
+                    ns <= st0;
+                end if;
+
+            when st1 =>
+                if tog_en = '1' then
+                    ns <= st0;
+                else
+                    ns <= st1;
+                end if;
+
+            when others =>
+                ns <= st0;
+        end case;
+    end process;
+
+    -- Output logic
+    output <= '1' when ps = st1 else '0';
+
+    with ps select
+        y <= '0' when st0,
+             '1' when st1,
+             '0' when others;
+
+end Behavioral;
