@@ -1,8 +1,11 @@
-#notes
+This repo contains the projects that i did to familiarize with vivado toolkit and vhdl
 
+contents
 
-    The next step after diving into the sequential machines is finite state machines .They are mathematical model of computation used to design systems that exists in a limited number of distinct conditions .
+1. Logic Gates
+2. Multiplexers
+3. Full Adder
+4. Flip Flop
+5. ALU
+6. Finite State Machine
 
-    There are mainly two types of fsm:
-        1. Moore machine===----->output is function of present state only
-        2.Mealy machine===--->output is the function of present state and next state
