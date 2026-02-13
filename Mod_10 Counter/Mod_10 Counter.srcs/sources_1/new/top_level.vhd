@@ -34,13 +34,15 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity top_level is
   Port ( clk:in std_logic;
          reset : in std_logic;
-         seg_out : out std_logic_vector(6 downto 0));
+         seg_out : out std_logic_vector(6 downto 0);
+         enable  : out std_logic_vector(3 downto 0));
 end top_level;
 
 architecture structural of top_level is
     signal binary_in : std_logic_vector(3 downto 0);
     signal div_clk : std_logic;
 begin
+    enable <= "0000";
 Divider: entity work.clock_divider
     port map (
         clk_in => clk,

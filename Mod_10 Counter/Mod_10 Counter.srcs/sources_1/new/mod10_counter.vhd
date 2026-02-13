@@ -36,7 +36,7 @@ begin
  
     process(div_clk, reset)
     begin
-        if reset = '1' then
+        if reset = '0' then
             reg_count <= (others => '0');
         elsif rising_edge(div_clk) then
             if reg_count = to_unsigned(9, reg_count'length)then 
