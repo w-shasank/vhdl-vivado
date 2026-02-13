@@ -69,7 +69,7 @@ begin
             begin   
                 if(rising_edge(clk)) then 
                     if(rx_clk_en = '1' and fsm_databits = '1') then
-                        rx_data <= uart_rxd & rx_data(7 downto 0);
+                        rx_data <= uart_rxd & rx_data(7 downto 1);
                      end if;
                  end if;
             end process;
@@ -79,7 +79,7 @@ begin
               
              --uart receiver parrity checker
              uart_rx_parity_generator : if (parity_bit /= "none") generate 
-                uart_rx_parity_gen_1 : entity work.uart_parity
+                uart_rx_parity_gen_i : entity work.uart_parity
                     generic map(data_width=> 8 , parity_type => parity_bit )
                     port map(data_in => rx_data , parity_out => rx_parity_bit);
                     
