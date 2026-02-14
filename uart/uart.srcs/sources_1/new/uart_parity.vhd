@@ -6,7 +6,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity uart_parity is
  generic(
             data_width : integer:= 8;
-            parity_type : string := "even"); -- legal values: "none", "even", "odd"
+            parity_type : string := "none"); -- legal values: "none", "even", "odd"
     port(
         data_in : in std_logic_vector(data_width -1 downto 0);
          parity_out : out std_logic);
@@ -38,7 +38,7 @@ begin
                                          end process;
                                  end generate;
     none_parity_generator : if(parity_type = "none") generate
-       parity_out <= '0'; -- Or whatever default state you want
+       parity_out <= '0'; -- default value
         end generate;
                            
 end Behavioral;

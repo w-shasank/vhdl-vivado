@@ -82,24 +82,119 @@ begin
                          else
                   case tx_data_out_sel is
                     when "01" => 
-                        UART_TXD <= '0';
+                        uart_txd <= '0';
                     when "10" => 
-                        UART_TXD <= tx_data(to_integer(tx_bit_count));
+                        uart_txd <= tx_data(to_integer(tx_bit_count));
                     when "11" => 
-                        UART_TXD <= tx_parity_bit;
+                        uart_txd <= tx_parity_bit;
                     when others => 
-                        UART_TXD <= '1';
+                        uart_txd <= '1';
                 end case;
             end if;
         end if;
     end process;
 
 
-                                            
-          
-               
-                 
-            
-            
+FSM: process(clk)
+    begin 
+        if(rising_edge(clk)) then 
+            if(rst ='1') then 
+                tx_pstate <= idle;
+            else
+                tx_pstate <= tx_nstate;
+            end if;
+        end if;
+    end process;
+    
+    
+ fsm_next_state : process(tx_pstate , din_vld ,tx_clk_en ,tx_bit_count)
+    begin
+        case tx_pstate is
+            when idle =>
+                tx_ready <= '1';
+                tx_data_out_sel <= "00";
+                tx_bit_count_en <= '0';
+                tx_clk_div_clr <= '1';
 
+                if (DIN_VLD = '1') then
+                    tx_nstate <= txsync;
+                else
+                    tx_nstate <= idle;
+                end if;
+
+         when txsync =>
+                tx_ready <= '0';
+                tx_data_out_sel <= "00";
+                tx_bit_count_en <= '0';
+                tx_clk_div_clr <= '0';
+
+                if (tx_clk_en = '1') then
+                    tx_nstate <= startbit;
+                else
+                    tx_nstate <= txsync;
+                end if;
+
+            when startbit =>
+                tx_ready <= '0';
+                tx_data_out_sel <= "01";
+                tx_bit_count_en <= '0';
+                tx_clk_div_clr <= '0';
+
+                if (tx_clk_en = '1') then
+                    tx_nstate <= databits;
+                else
+                    tx_nstate <= startbit;
+                end if;
+
+            when databits =>
+                tx_ready <= '0';
+                tx_data_out_sel <= "10";
+                tx_bit_count_en <= '1';
+                tx_clk_div_clr <= '0';
+
+                if ((tx_clk_en = '1') AND (tx_bit_count = "111")) then
+                    if (parity_bit = "none") then
+                        tx_nstate <= stopbit;
+                    else
+                        tx_nstate <= paritybit;
+                    end if ;
+                else
+                    tx_nstate <= databits;
+                end if;
+
+            when paritybit =>
+                tx_ready <= '0';
+                tx_data_out_sel <= "11";
+                tx_bit_count_en <= '0';
+                tx_clk_div_clr <= '0';
+
+                if (tx_clk_en = '1') then
+                    tx_nstate <= stopbit;
+                else
+                    tx_nstate <= paritybit;
+                end if;
+
+            when stopbit =>
+                tx_ready <= '1';
+                tx_data_out_sel <= "00";
+                tx_bit_count_en <= '0';
+                tx_clk_div_clr <= '0';
+
+                if (DIN_VLD = '1') then
+                    tx_nstate <= txsync;
+                elsif (tx_clk_en = '1') then
+                    tx_nstate <= idle;
+                else
+                    tx_nstate <= stopbit;
+                end if;
+
+            when others =>
+                tx_ready <= '0';
+                tx_data_out_sel <= "00";
+                tx_bit_count_en <= '0';
+                tx_clk_div_clr <= '0';
+                tx_nstate <= idle;
+
+        end case;
+    end process;
 end Behavioral;
