@@ -8,4 +8,3 @@ contents
 4. Flip Flop
 5. ALU
 6. Finite State Machine
-
